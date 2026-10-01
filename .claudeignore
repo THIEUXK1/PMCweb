@@ -1,0 +1,66 @@
+# Phụ thuộc & build
+node_modules/
+vendor/
+dist/
+build/
+.next/
+.cache/
+coverage/
+
+# Lockfile
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+composer.lock
+
+# Rút gọn / sinh tự động
+*.min.js
+*.min.css
+*.bundle.js
+*.map
+
+# Log & tạm
+*.log
+logs/
+tmp/
+*.bak
+*.swp
+
+# Media & nhị phân
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.svg
+*.ico
+*.woff
+*.woff2
+*.ttf
+*.mp4
+*.mp3
+*.pdf
+*.zip
+*.exe
+
+# Dump CSDL
+*.sql.gz
+*.mdf
+*.bacpac
+db/dumps/
+
+# Meta
+CHANGELOG*
+LICENSE*
+.github/
+.idea/
+.vscode/
+
+# Bí mật — giữ .env.example
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+.git/

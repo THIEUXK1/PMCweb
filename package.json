@@ -1,0 +1,27 @@
+{
+  "name": "pmcweb",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Hệ thống quản lý nội bộ PMC",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=20.6"
+  },
+  "scripts": {
+    "dev": "node --watch --watch-preserve-output --env-file=.env src/server.js",
+    "start": "node --env-file=.env src/server.js",
+    "migrate": "node --env-file=.env scripts/migrate.js up",
+    "migrate:down": "node --env-file=.env scripts/migrate.js down",
+    "create-admin": "node --env-file=.env scripts/create-admin.js",
+    "import:dyeing-plan": "node --env-file=.env scripts/import-dyeing-plan.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "express-mysql-session": "^3.0.3",
+    "express-session": "^1.19.0",
+    "mssql": "^12.7.2"
+  },
+  "devDependencies": {
+    "exceljs": "^4.4.0"
+  }
+}

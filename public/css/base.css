@@ -1,0 +1,277 @@
+:root {
+  --color-bg: #f5f6f8;
+  --color-surface: #fff;
+  --color-text: #1f2328;
+  --color-muted: #6b7280;
+  --color-primary: #1d4ed8;
+  --color-danger: #b91c1c;
+  --color-border: #d1d5db;
+  --radius: 6px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font: 15px/1.5 system-ui, 'Segoe UI', Roboto, sans-serif;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+body.center { min-height: 100vh; display: grid; place-items: center; padding: 16px; }
+
+.card {
+  width: 100%;
+  max-width: 360px;
+  padding: 24px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.card h1 { margin-top: 0; font-size: 1.4rem; }
+
+label { display: block; margin-bottom: 12px; }
+
+input {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 8px 10px;
+  font: inherit;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+button {
+  padding: 8px 16px;
+  font: inherit;
+  color: #fff;
+  background: var(--color-primary);
+  border: 0;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+button:disabled { opacity: .6; cursor: wait; }
+
+.field-error, .form-error { color: var(--color-danger); }
+.form-error:empty { display: none; }
+
+.topbar {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.topbar #current-user { margin-left: auto; color: var(--color-muted); }
+.page-title { margin: 0; font-size: 1.1rem; }
+
+.container { max-width: 1100px; margin: 0 auto; padding: 16px; }
+
+/* Layout: menu trái + nội dung */
+.layout { display: flex; min-height: 100vh; }
+.layout-main { flex: 1; min-width: 0; }
+
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: #111827;
+  color: #e5e7eb;
+}
+
+.sidebar-brand {
+  padding: 14px 16px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border-bottom: 1px solid #1f2937;
+}
+
+.sidebar-nav { display: flex; flex-direction: column; padding: 8px; }
+
+.sidebar-nav a {
+  padding: 8px 12px;
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--radius);
+}
+
+.sidebar-nav a:hover { background: #1f2937; }
+.sidebar-nav a.active { background: var(--color-primary); color: #fff; }
+
+.menu-toggle { display: none; padding: 4px 10px; }
+.sidebar-backdrop { display: none; }
+
+@media (max-width: 768px) {
+  .menu-toggle { display: inline-block; }
+  .sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 20;
+    transform: translateX(-100%);
+    transition: transform .2s;
+  }
+  .menu-open .sidebar { transform: none; }
+  .menu-open .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    background: rgba(0, 0, 0, .4);
+  }
+}
+
+.container.wide { max-width: none; }
+.sidebar-nav a small { display: block; font-size: .8rem; opacity: .75; }
+.muted { color: var(--color-muted); }
+.small { font-size: .85rem; }
+
+/* Thanh lọc */
+.toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin-bottom: 12px; }
+.toolbar label { margin: 0; font-size: .85rem; color: var(--color-muted); }
+.toolbar label.grow { flex: 1 1 240px; }
+.toolbar input, .toolbar select { margin-top: 4px; color: var(--color-text); }
+select {
+  display: block;
+  padding: 8px 10px;
+  font: inherit;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+.btn-group { display: flex; gap: 6px; }
+.btn-light { color: var(--color-text); background: var(--color-surface); border: 1px solid var(--color-border); }
+.btn-light:hover:not(:disabled) { background: #eef2ff; }
+.btn-light:disabled { cursor: default; opacity: .45; }
+
+/* Bảng dữ liệu */
+.table-wrap {
+  overflow: auto;
+  max-height: calc(100vh - 260px);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+.table-wrap.tall { max-height: calc(100vh - 230px); }
+.data-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: .85rem; }
+.data-table th, .data-table td {
+  padding: 6px 8px;
+  white-space: nowrap;
+  text-align: left;
+  border-bottom: 1px solid #eceef1;
+}
+.data-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #f3f4f6;
+  font-weight: 600;
+  border-bottom: 1px solid var(--color-border);
+}
+.data-table tbody tr:hover td:not([class*="cg-"]) { background: #f8fafc; }
+.data-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.data-table .empty { padding: 24px; text-align: center; color: var(--color-muted); }
+.loading { opacity: .5; pointer-events: none; transition: opacity .15s; }
+
+.pager { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: flex-end; margin: 8px 0; }
+.pager .muted { margin-right: auto; }
+.pager button { padding: 4px 10px; }
+
+/* Lịch máy (sheet Total) */
+.legend { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+.chip { padding: 2px 10px; font-size: .8rem; border-radius: 999px; }
+.schedule thead tr:nth-child(2) th { top: 31px; }
+.schedule .sticky-col {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+}
+.schedule thead .sticky-col { z-index: 3; background: #f3f4f6; }
+.schedule th.day { text-align: center; border-left: 2px solid var(--color-border); }
+.schedule .slot-no { padding: 2px 4px; text-align: center; font-weight: 400; color: var(--color-muted); }
+.schedule .day-start { border-left: 2px solid var(--color-border); }
+.schedule td.slot {
+  max-width: 110px;
+  min-width: 34px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: .75rem;
+  border-left: 1px solid #f1f2f4;
+}
+.schedule .today { background: #fffbeb; }
+.schedule th.today { background: #fde68a; }
+.cg-brown { background: #e9d5c3; color: #4a2c14; }
+.cg-black { background: #374151; color: #f9fafb; }
+.cg-blue  { background: #bfdbfe; color: #1e3a8a; }
+.cg-red   { background: #fecaca; color: #7f1d1d; }
+.cg-light { background: #f5f5dc; color: #44403c; }
+.cg-other { background: #e5e7eb; color: #374151; }
+.schedule tbody tr:hover td.slot[class*="cg-"] { filter: brightness(.95); }
+
+/* ---- Gantt máy nhuộm (bảng tối kiểu màn hình xưởng) ---- */
+.toolbar input.narrow { width: 90px; }
+.gantt-board {
+  --gantt-label: 170px;
+  --gantt-line: rgba(255, 255, 255, .12);
+  background: linear-gradient(180deg, #011135 0%, #011d52 100%);
+  color: #e5f8fb; border-radius: var(--radius); padding: 12px;
+}
+.gantt-board > p { color: #e5f8fb; margin: 0; }
+.gantt-title { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px; }
+.gantt-title h2 { margin: 0; font-size: 1.4rem; color: #01fffb; text-shadow: 0 0 8px rgba(1, 255, 251, .6); }
+.gantt-title small { color: #7dd3fc; }
+.gantt-clock { font-size: 1.2rem; color: #01fffb; font-variant-numeric: tabular-nums; }
+.gantt-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 8px; }
+.gantt-legend .muted { color: #93c5fd; margin-left: auto; }
+.gantt-scroll { max-height: calc(100vh - 290px); min-height: 300px; overflow: auto; border: 1px solid var(--gantt-line); }
+.gantt-inner { min-width: calc(var(--gantt-label) + var(--days) * 160px); }
+.gantt-row { display: flex; min-height: 34px; border-bottom: 1px solid var(--gantt-line); }
+.gantt-label {
+  position: sticky; left: 0; z-index: 2; flex: 0 0 var(--gantt-label);
+  display: flex; flex-direction: column; justify-content: center; padding: 2px 8px;
+  background: #0b2a5b; border-right: 1px solid var(--gantt-line);
+}
+.gantt-label small { color: #93c5fd; font-size: .72rem; }
+.gantt-track {
+  position: relative; flex: 1 1 auto;
+  background: repeating-linear-gradient(to right, transparent 0 calc(100% / var(--days) - 1px), var(--gantt-line) calc(100% / var(--days) - 1px) calc(100% / var(--days)));
+}
+.gantt-head { position: sticky; top: 0; z-index: 3; background: #0b2a5b; font-weight: 600; }
+.gantt-head .gantt-label { justify-content: flex-end; color: #01fffb; z-index: 4; }
+.gantt-head .gantt-track { display: flex; background: none; }
+.gantt-day { flex: 1 1 0; text-align: center; padding-top: 4px; border-right: 1px solid var(--gantt-line); }
+.gantt-day.today { background: rgba(1, 255, 251, .15); color: #01fffb; }
+.gantt-slots { display: flex; font-size: .7rem; font-weight: 400; color: #93c5fd; }
+.gantt-slots span { flex: 1 1 0; }
+.gantt-bar {
+  position: absolute; top: 4px; bottom: 4px; overflow: hidden; padding: 0 6px;
+  display: flex; align-items: center; font-size: .72rem; white-space: nowrap;
+  border-radius: 4px; border: 1px solid rgba(0, 0, 0, .35); cursor: default;
+}
+.gantt-bar span { overflow: hidden; text-overflow: ellipsis; }
+.gantt-bar:hover { filter: brightness(1.15); outline: 2px solid #01fffb; z-index: 1; }
+.gantt-bar.cg-brown { background: #8b5e3c; color: #fff; }
+.gantt-bar.cg-black { background: #111827; color: #f9fafb; border-color: #6b7280; }
+.gantt-bar.cg-blue  { background: #2563eb; color: #fff; }
+.gantt-bar.cg-red   { background: #dc2626; color: #fff; }
+.gantt-bar.cg-light { background: #f5f0d0; color: #3f3a2a; }
+.gantt-bar.cg-other { background: #94a3b8; color: #0f172a; }
+.gantt-body { position: relative; }
+/* Trang /gantt.html: toàn màn hình, bảng giãn hết chiều cao còn lại. */
+body.gantt-page { margin: 0; background: #011135; color: #e5f8fb; }
+.gantt-page #app { display: flex; flex-direction: column; height: 100vh; padding: 8px 12px; box-sizing: border-box; }
+.gantt-page .toolbar { margin-bottom: 4px; }
+.gantt-page .toolbar label, .gantt-page [data-role="meta"] { color: #93c5fd; }
+.gantt-page [data-role="meta"] { margin: 0 0 6px; }
+.gantt-page .gantt-board { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; padding: 8px 0 0; }
+.gantt-page .gantt-scroll { flex: 1 1 auto; max-height: none; min-height: 0; }
+.gantt-now {
+  position: absolute; top: 0; bottom: 0; width: 0; z-index: 1; pointer-events: none;
+  left: calc(var(--gantt-label) + var(--now) * (100% - var(--gantt-label)));
+  border-left: 2px solid #fc0404;
+}

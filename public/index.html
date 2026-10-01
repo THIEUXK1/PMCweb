@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PMCweb</title>
+  <link rel="stylesheet" href="/css/base.css">
+</head>
+<body class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">PMCweb</div>
+    <nav class="sidebar-nav">
+      <a href="#/total">Total <small>Lịch máy nhuộm</small></a>
+      <a href="/gantt.html" target="_blank" rel="noopener">Gantt <small>Biểu đồ máy nhuộm</small></a>
+      <a href="#/detail-order">Detail order <small>Kế hoạch chia lô</small></a>
+      <a href="#/master">Master <small>Số lô mỗi ngày</small></a>
+    </nav>
+  </aside>
+  <div class="sidebar-backdrop" data-action="close-menu"></div>
+  <div class="layout-main">
+    <header class="topbar">
+      <button type="button" class="menu-toggle" data-action="toggle-menu" aria-controls="sidebar" aria-label="Mở menu">☰</button>
+      <h1 id="page-title" class="page-title"></h1>
+      <span id="current-user"></span>
+      <button type="button" data-action="logout">Đăng xuất</button>
+    </header>
+    <main id="app" class="container wide"></main>
+  </div>
+  <script type="module">
+    import { init } from '/js/pages/home.js';
+    init();
+  </script>
+</body>
+</html>
