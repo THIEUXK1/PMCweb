@@ -4,7 +4,7 @@
 Hệ thống quản lý nội bộ cho nhân viên PMC. Phạm vi: [project-scope.md](../docs/project-scope.md).
 
 ## Stack thực tế
-Node ≥ 20.6 · Express · MySQL/MariaDB (Laragon) qua mysql2 · HTML + JS thuần. Chi tiết gói và lý do:
+Node ≥ 20.6 · Express · SQL Server 2016 (`10.0.60.33`/`PMCweb`) qua `mssql` · HTML + JS thuần. Chi tiết gói và lý do:
 [node-express-architecture.md](../docs/node-express-architecture.md).
 
 ## Cấu trúc mã nguồn
@@ -22,5 +22,5 @@ Xem [00-context-memory.md §0](00-context-memory.md) và [decision-log.md](decis
 
 ## Rủi ro đang mở
 - Môi trường production chưa xác định (hosting, HTTPS, DB riêng hay chung).
-- Phiên bản MySQL vs MariaDB ảnh hưởng cú pháp migration idempotent.
+- SQL Server 2016 (compat 130) không có `STRING_AGG`, `TRIM`, `CREATE TABLE IF NOT EXISTS` → migration idempotent dùng `IF NOT EXISTS (SELECT … FROM sys.*)`.
 - Nghiệp vụ phase 1 chưa rõ → dễ phình phạm vi.

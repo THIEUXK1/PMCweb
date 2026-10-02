@@ -24,6 +24,6 @@ _TODO — mỗi nghiệp vụ một mục: route, dữ liệu, quyền, trạng 
 - [ ] Tạo/sửa/xoá cập nhật DOM ngay, không `location.reload()`; F5 vẫn thấy đúng dữ liệu.
 - [ ] Xoá → bản ghi có `deleted_at`, biến mất khỏi danh sách, còn trong DB; có dòng `audit_logs`.
 - [ ] Nhập `' OR 1=1 --` và `<script>alert(1)</script>` vào ô tìm kiếm/tên → không lỗi SQL, hiển thị dạng text.
-- [ ] Tắt MySQL → API trả 500 `Lỗi hệ thống`, không lộ stack trace; client báo lỗi rõ ràng.
+- [ ] Mất kết nối SQL Server (sai `DB_HOST` trong `.env`) → API trả 500 `Lỗi hệ thống`, không lộ stack trace; client báo lỗi rõ ràng.
 - [ ] Bấm submit liên tục → chỉ tạo một bản ghi.
 - [ ] Response JSON không bao giờ chứa `password_hash`.

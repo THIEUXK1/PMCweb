@@ -16,6 +16,8 @@ Phân lớp tóm tắt + điều cấm: [core.md](../rules/core.md). File này l
 | Trang mới | `public/<trang>.html` (vỏ rỗng) + `public/js/pages/<trang>.js` | Gọi API qua `public/js/api.js`. |
 | Thành phần UI tái dùng (bảng, modal, toast) | `public/js/components/<tên>.js` | Hàm render nhận dữ liệu, trả DOM node. |
 | Script CLI (migrate, tạo admin) | `scripts/<tên>.js` | Khai báo trong `package.json > scripts`. |
+| Gọi HTTP hệ thống ngoài (MES...) | `src/clients/<hệ-thống>.client.js` | Chỉ I/O + kiểm phản hồi; dùng `fetch` có sẵn, credential qua `config`, không log secret. |
+| Tác vụ định kỳ trong server | `src/jobs/<tên>.job.js` | Chỉ lo timer/chống chạy chồng/log; nghiệp vụ gọi sang service. Khởi động trong `src/server.js`. |
 
 Cấm tạo file ngoài các thư mục trên. Không khớp → hỏi `system-architect`.
 

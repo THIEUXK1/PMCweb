@@ -8,31 +8,21 @@
 - [ ] `src/app.js`, `src/server.js`, `error-handler`, `app-error`, `async-handler`.
 
 ## 2. CSDL & migration
-- [ ] Kiểm `SELECT VERSION()` trên MySQL của Laragon; ghi kết quả vào context-memory.
-- [ ] Tạo DB `pmcweb` (utf8mb4) + user ứng dụng quyền DML (người dùng tự chạy).
-- [ ] `src/db/pool.js` + `withTransaction`.
-- [ ] `scripts/migrate.js` (up / down 1 bước, bảng `schema_migrations`).
-- [ ] Migration `001_create_users` (+ `roles`), `002_create_sessions` (nếu không để `express-mysql-session` tự tạo), `003_create_audit_logs`.
+- [x] Kiểm `SELECT @@VERSION` trên SQL Server `10.0.60.33` → 2016 SP3 (ghi ở context-memory).
+- [ ] DB `PMCweb` (Vietnamese_100_CI_AS) + login `pmcweb_app` (db_datareader/writer) — người dùng tự tạo.
+- [ ] `src/db/pool.js` (adapter `execute` `?` → `@pN`) + `withTransaction`.
+- [ ] `scripts/migrate.js` (up / down 1 bước, bảng `schema_migrations`, tách batch bằng `GO`, user DDL riêng `MIGRATE_DB_USER`).
+- [ ] Migration `users` (+ `roles`), `sessions` (cho `src/db/session-store.js`), `audit_logs`.
 - [ ] Quy tắc: [database-safety.md](../docs/database-safety.md). Qua `database-auditor` trước khi chạy.
 
 ## 3. Cấu hình bảo mật
-- [ ] `.env.example` (chỉ key + giá trị giả):
-  ```
-  PORT=3000
-  NODE_ENV=development
-  DB_HOST=127.0.0.1
-  DB_PORT=3306
-  DB_USER=pmcweb_app
-  DB_PASSWORD=changeme
-  DB_NAME=pmcweb
-  SESSION_SECRET=replace-with-64-random-chars
-  ```
+- [ ] `.env.example` (chỉ key + giá trị giả) — danh sách key xem chính file đó ở gốc repo.
 - [ ] `.env` thật — gitignored, không commit.
 - [ ] `src/config/index.js` throw khi thiếu key bắt buộc.
 - [ ] Session cookie + CSRF middleware theo [coding-standards.md](../docs/coding-standards.md#bảo-mật-phần-code).
 
 ## 4. Dựng lại trên máy mới
-1. Cài Laragon (MySQL) + Node ≥ 20.6.
+1. Cài Node ≥ 20.6; máy phải tới được SQL Server `10.0.60.33:1433`.
 2. `npm i --silent`
 3. Copy `.env.example` → `.env`, điền giá trị thật.
 4. Tạo DB + user, `npm run migrate`.

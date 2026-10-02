@@ -34,5 +34,5 @@ _TODO (người dùng điền): các nghiệp vụ cụ thể cần quản lý �
 
 ## Người dùng & môi trường
 - Người dùng: nhân viên nội bộ, trình duyệt desktop (Chrome/Edge) trong mạng công ty.
-- Dev: Windows 10 + Laragon (MySQL) + Node ≥ 20.6.
+- Dev: Windows 10 + Node ≥ 20.6, DB SQL Server dùng chung `10.0.60.33` (Laragon chỉ còn làm web server tĩnh).
 - Production: _chưa xác định_.
