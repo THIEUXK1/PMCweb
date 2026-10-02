@@ -1,9 +1,12 @@
 const config = require('./config');
 const { app, sessionStore } = require('./app');
 const { pool } = require('./db/pool');
+const mesColorSyncJob = require('./jobs/mes-color-sync.job');
 
+let stopMesSync = () => {};
 const server = app.listen(config.port, () => {
   console.log(`PMCweb chạy tại http://localhost:${config.port} (${config.env})`);
+  stopMesSync = mesColorSyncJob.start();
 });
 
 let shuttingDown = false;
@@ -11,6 +14,7 @@ async function shutdown(signal) {
   if (shuttingDown) return;
   shuttingDown = true;
   console.log(`${signal}: đang tắt...`);
+  stopMesSync();
   server.close(async () => {
     await sessionStore.close();
     await pool.end();

@@ -25,4 +25,16 @@ module.exports = {
     password: process.env.MIGRATE_DB_USER ? (process.env.MIGRATE_DB_PASSWORD || '') : (process.env.DB_PASSWORD || ''),
   },
   sessionSecret: process.env.SESSION_SECRET,
+  // Cookie Secure chỉ bật khi site chạy HTTPS; chạy HTTP mà bật thì express-session không gửi cookie.
+  cookieSecure: process.env.COOKIE_SECURE === 'true',
+  // Chạy sau reverse proxy (IIS/nginx) kết thúc HTTPS → đặt TRUST_PROXY=1 để req.secure đúng.
+  trustProxy: process.env.TRUST_PROXY === '1',
+  // MES công ty: đọc màu thực tế theo mã màu. Thiếu tài khoản → tắt đồng bộ, không chặn khởi động.
+  mes: {
+    enabled: Boolean(process.env.MES_USERNAME && process.env.MES_PASSWORD),
+    baseUrl: (process.env.MES_BASE_URL || 'https://f.mes.bestpacific.vn/mes').replace(/\/+$/, ''),
+    username: process.env.MES_USERNAME || '',
+    password: process.env.MES_PASSWORD || '',
+    syncMinutes: Math.max(5, Number(process.env.MES_SYNC_MINUTES) || 30),
+  },
 };

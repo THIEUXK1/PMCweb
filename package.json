@@ -13,7 +13,8 @@
     "migrate": "node --env-file=.env scripts/migrate.js up",
     "migrate:down": "node --env-file=.env scripts/migrate.js down",
     "create-admin": "node --env-file=.env scripts/create-admin.js",
-    "import:dyeing-plan": "node --env-file=.env scripts/import-dyeing-plan.js"
+    "import:dyeing-plan": "node --env-file=.env scripts/import-dyeing-plan.js",
+    "sync:mes-colors": "node --env-file=.env scripts/sync-mes-colors.js"
   },
   "dependencies": {
     "express": "^5.2.1",

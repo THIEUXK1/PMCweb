@@ -13,6 +13,7 @@ const sessionStore = new MssqlSessionStore({ checkExpirationInterval: 15 * 60 * 
 
 const app = express();
 app.disable('x-powered-by');
+if (config.trustProxy) app.set('trust proxy', 1);
 
 app.use(express.json({ limit: '1mb' }));
 app.use(session({
@@ -26,7 +27,7 @@ app.use(session({
   cookie: {
     httpOnly: true,
     sameSite: 'lax',
-    secure: config.isProduction,
+    secure: config.cookieSecure,
     maxAge: 400 * 24 * 60 * 60 * 1000,
   },
 }));

@@ -49,6 +49,21 @@ async function findTotalSlots(fromDate, toDate) {
   return rows;
 }
 
+/**
+ * Giờ nhuộm/lô (cột "THỜI GIAN NHUỘM/LÔ" sheet detail) theo khoá ô sheet Total
+ * = mã hàng + mã màu + hệ màu. Một khoá có nhiều mức giờ → lấy mức lớn nhất.
+ */
+async function findDyeHoursByCell() {
+  const [rows] = await pool.execute(
+    `SELECT CONCAT(item_code, color_code, color_group) AS cell_value,
+            MAX(TRY_CONVERT(float, dye_hours_per_batch)) AS hours
+       FROM stg_detail_orders_ext
+      GROUP BY CONCAT(item_code, color_code, color_group)
+     HAVING MAX(TRY_CONVERT(float, dye_hours_per_batch)) > 0`,
+  );
+  return rows;
+}
+
 // ---- Sheet "detail order " ----
 
 async function searchDetailOrders({ q, machine, colorGroup, dyeDateSerial, offset, limit }) {
@@ -133,6 +148,7 @@ module.exports = {
   findLastImport,
   findTotalMachines,
   findTotalDateRange,
+  findDyeHoursByCell,
   findTotalSlots,
   searchDetailOrders,
   findDetailOrderMachines,

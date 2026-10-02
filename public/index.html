@@ -8,12 +8,29 @@
 </head>
 <body class="layout">
   <aside class="sidebar" id="sidebar">
-    <div class="sidebar-brand">PMCweb</div>
+    <div class="sidebar-brand">
+      <span class="brand-logo">P</span>
+      <span class="brand-text">PMCweb <small>Kế hoạch nhuộm</small></span>
+    </div>
     <nav class="sidebar-nav">
-      <a href="#/total">Total <small>Lịch máy nhuộm</small></a>
-      <a href="/gantt.html" target="_blank" rel="noopener">Gantt <small>Biểu đồ máy nhuộm</small></a>
-      <a href="#/detail-order">Detail order <small>Kế hoạch chia lô</small></a>
-      <a href="#/master">Master <small>Số lô mỗi ngày</small></a>
+      <div class="nav-section">Kế hoạch</div>
+      <a href="#/total">
+        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M7 13h3M14 13h3M7 17h3"/></svg>
+        <span class="nav-text">Total <small>Lịch máy nhuộm</small></span>
+      </a>
+      <a href="/gantt.html" target="_blank" rel="noopener">
+        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4v16h18"/><path d="M7 8h7M10 12h8M7 16h5"/></svg>
+        <span class="nav-text">Gantt <small>Biểu đồ máy nhuộm</small></span>
+        <svg class="nav-ext" viewBox="0 0 24 24" aria-label="Mở tab mới"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>
+      </a>
+      <a href="#/detail-order">
+        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 3 8l9 5 9-5-9-5z"/><path d="m3 13 9 5 9-5"/></svg>
+        <span class="nav-text">Detail order <small>Kế hoạch chia lô</small></span>
+      </a>
+      <a href="#/master">
+        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+        <span class="nav-text">Master <small>Số lô mỗi ngày</small></span>
+      </a>
     </nav>
   </aside>
   <div class="sidebar-backdrop" data-action="close-menu"></div>
@@ -21,8 +38,11 @@
     <header class="topbar">
       <button type="button" class="menu-toggle" data-action="toggle-menu" aria-controls="sidebar" aria-label="Mở menu">☰</button>
       <h1 id="page-title" class="page-title"></h1>
-      <span id="current-user"></span>
-      <button type="button" data-action="logout">Đăng xuất</button>
+      <span class="user-chip">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+        <span id="current-user"></span>
+      </span>
+      <button type="button" class="btn-light btn-logout" data-action="logout">Đăng xuất</button>
     </header>
     <main id="app" class="container wide"></main>
   </div>

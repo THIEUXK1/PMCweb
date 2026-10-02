@@ -1,4 +1,5 @@
 const planRepo = require('../repositories/plan.repo');
+const mesColorService = require('./mes-color.service');
 const { serialToIsoDate, isoDateToSerial } = require('../utils/excel-date');
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -30,7 +31,7 @@ async function getTotal({ from, days }) {
   const range = await planRepo.findTotalDateRange();
   const lastImport = await planRepo.findLastImport();
   if (!range || !range.min_date) {
-    return { dates: [], slotsPerDay: 0, machines: [], range: null, lastImport };
+    return { dates: [], slotsPerDay: 0, machines: [], colors: {}, hours: {}, range: null, lastImport };
   }
 
   let start = from;
@@ -53,10 +54,23 @@ async function getTotal({ from, days }) {
     if (!byDate[s.plan_date]) byDate[s.plan_date] = Array(slotsPerDay).fill(null);
     byDate[s.plan_date][s.slot_no - 1] = s.value;
   }
+  // Route công khai: chỉ trả value → hex, không lộ số mẻ/máy MES.
+  const values = new Set(slots.map((s) => s.value).filter(Boolean));
+  const [colors, hourRows] = await Promise.all([
+    mesColorService.colorsFor(values),
+    planRepo.findDyeHoursByCell(),
+  ]);
+  // Giờ nhuộm/lô theo mã hàng-màu, chỉ các mã có trong khoảng đang xem.
+  const hours = {};
+  for (const r of hourRows) {
+    if (values.has(r.cell_value)) hours[r.cell_value] = r.hours;
+  }
 
   return {
     dates,
     slotsPerDay,
+    colors,
+    hours,
     range: { min: range.min_date, max: range.max_date },
     lastImport,
     machines: machines.map((m) => ({
