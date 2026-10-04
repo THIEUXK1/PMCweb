@@ -17,12 +17,10 @@
     "sync:mes-colors": "node --env-file=.env scripts/sync-mes-colors.js"
   },
   "dependencies": {
+    "exceljs": "^4.4.0",
     "express": "^5.2.1",
     "express-mysql-session": "^3.0.3",
     "express-session": "^1.19.0",
     "mssql": "^12.7.2"
-  },
-  "devDependencies": {
-    "exceljs": "^4.4.0"
   }
 }

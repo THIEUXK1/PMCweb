@@ -1,11 +1,16 @@
-// Dùng: node --env-file=.env scripts/import-dyeing-plan.js "<đường dẫn .xlsx>" [--dry-run]
-// Đọc các sheet khai báo trong src/utils/dyeing-plan-sheets.js, thay toàn bộ dữ liệu bảng stg_* tương ứng.
-// --dry-run: chỉ đọc file và in số dòng, không ghi DB.
+// Dùng: node --env-file=.env scripts/import-dyeing-plan.js "<đường dẫn .xlsx>" [--dry-run] [--replace] [--auto]
+// Đọc các sheet khai báo trong src/utils/dyeing-plan-sheets.js, đồng bộ bảng stg_* tương ứng theo chênh lệch:
+// dòng không đổi giữ nguyên, dòng mới/sửa → thêm, dòng file không còn → xoá; lịch các ngày cũ hơn file được giữ.
+// Mỗi lần đồng bộ ghi lịch sử vào stg_sync_runs / stg_sync_run_tables / stg_change_log (migration 007).
+// --dry-run: chỉ in chênh lệch, không ghi DB.  --replace: xoá sạch rồi nhập lại toàn bộ (cách cũ, không ghi lịch sử).
+// --auto: đánh dấu lần chạy do job tự động (src/jobs/dyeing-plan-sync.job.js) gọi.
+const fs = require('node:fs/promises');
 const path = require('node:path');
 const ExcelJS = require('exceljs');
 const { pool } = require('../src/db/pool');
-const { SHEETS, TOTAL_SHEET, MAX_VALUE_LENGTH } = require('../src/utils/dyeing-plan-sheets');
+const { SHEETS, TOTAL_SHEET, MAX_VALUE_LENGTH, planDateFromFileName } = require('../src/utils/dyeing-plan-sheets');
 const { serialToIsoDate } = require('../src/utils/excel-date');
+const { localStamp } = require('../src/utils/local-stamp');
 const stagingImportService = require('../src/services/staging-import.service');
 
 // Giá trị ô → chuỗi thô hoặc null. Công thức lấy kết quả đã lưu; công thức chưa có kết quả → null.
@@ -101,29 +106,68 @@ async function readSheets(file) {
 async function main() {
   const args = process.argv.slice(2);
   const dryRun = args.includes('--dry-run');
+  const replace = args.includes('--replace');
   const file = args.find((a) => !a.startsWith('--'));
   if (!file) {
-    console.error('Dùng: import-dyeing-plan.js "<file .xlsx>" [--dry-run]');
+    console.error('Dùng: import-dyeing-plan.js "<file .xlsx>" [--dry-run] [--replace] [--auto]');
     process.exit(1);
   }
+
+  // Giờ lưu file lấy TRƯỚC khi đọc: file bị lưu lại trong lúc đọc → lần quét sau thấy mtime mới và đồng bộ lại.
+  const fileName = path.basename(file);
+  const yearInPath = path.resolve(file).split(path.sep).reverse().find((p) => /^20\d{2}$/.test(p));
+  const source = {
+    fileName,
+    filePath: path.resolve(file),
+    planDate: planDateFromFileName(fileName, yearInPath || new Date().getFullYear()),
+    fileMtime: localStamp((await fs.stat(file)).mtime),
+    triggerType: args.includes('--auto') ? 'auto' : 'manual',
+  };
 
   const { result, total, errors } = await readSheets(file);
   if (errors.length > 0) {
     errors.slice(0, 20).forEach((e) => console.error('ERROR', e));
-    throw new Error(`${errors.length} lỗi khi đọc file — chưa ghi gì vào DB`);
+    const message = `${errors.length} lỗi khi đọc file — chưa ghi gì vào DB`;
+    if (!dryRun && !replace) await stagingImportService.recordFailure(source, `${message}: ${errors[0]}`);
+    throw new Error(message);
   }
 
+  // Thứ tự: máy (Total) trước ô lịch để remapPastSlots ghép theo dòng máy mới.
   const sheets = [
-    ...SHEETS.map((s) => ({ sheet: s.sheet, table: s.table, rows: result.get(s.sheet) })),
+    ...SHEETS.map((s) => ({
+      sheet: s.sheet,
+      table: s.table,
+      rows: result.get(s.sheet),
+      historyColumn: s.historyColumn,
+      logChanges: s.logChanges,
+    })),
     { sheet: TOTAL_SHEET.sheet, table: TOTAL_SHEET.machinesTable, rows: total.machines },
-    { sheet: TOTAL_SHEET.sheet, table: TOTAL_SHEET.slotsTable, rows: total.slots },
+    {
+      sheet: TOTAL_SHEET.sheet,
+      table: TOTAL_SHEET.slotsTable,
+      rows: total.slots,
+      historyColumn: TOTAL_SHEET.slotsHistoryColumn,
+      recordKey: TOTAL_SHEET.slotsRecordKey,
+      remapPastSlots: true,
+    },
   ];
-  if (dryRun) {
-    sheets.forEach((s) => console.log(`DRY  ${s.table.padEnd(24)} ${s.rows.length} dòng`));
+  if (replace) {
+    if (dryRun) {
+      sheets.forEach((s) => console.log(`DRY  ${s.table.padEnd(24)} ${s.rows.length} dòng`));
+      return;
+    }
+    const summary = await stagingImportService.replaceAll(fileName, sheets);
+    summary.forEach((s) => console.log(`OK   ${s.table.padEnd(24)} ${s.rows} dòng`));
     return;
   }
-  const summary = await stagingImportService.replaceAll(path.basename(file), sheets);
-  summary.forEach((s) => console.log(`OK   ${s.table.padEnd(24)} ${s.rows} dòng`));
+  const summary = await stagingImportService.syncAll(source, sheets, { dryRun });
+  summary.forEach((s) => {
+    const kept = s.keepBefore ? `  giữ lịch trước ${s.keepBefore}: ${s.kept}` : '';
+    const remap = s.remapped ? `  ghép lại máy: ${s.remapped}` : '';
+    const logged = s.logged ? `  nhật ký: ${s.logged}` : '';
+    console.log(`${dryRun ? 'DRY' : 'OK '}  ${s.table.padEnd(24)} file ${String(s.rows).padStart(5)} | không đổi ${String(s.unchanged).padStart(5)}`
+      + ` | thêm ${String(s.inserted).padStart(5)} | xoá ${String(s.deleted).padStart(5)}${kept}${remap}${logged}`);
+  });
 }
 
 main()

@@ -33,7 +33,7 @@ Bảng "tạo file mới ở đâu": [architecture-workflow.md](architecture-wor
 |---|---|
 | `express` | HTTP server + router. |
 | `mssql` | Driver SQL Server (tedious, thuần JS) — tham số hoá thật qua `sp_executesql`. |
-| `exceljs` _(dev)_ | Đọc xlsx cho `scripts/import-dyeing-plan.js` — dùng stream reader (đọc cả workbook tràn RAM). |
+| `exceljs` | Đọc xlsx cho `scripts/import-dyeing-plan.js` (job tự động gọi ở tiến trình con) — dùng stream reader (đọc cả workbook tràn RAM). |
 | `express-session` | Phiên đăng nhập phía server (ứng dụng nội bộ, không cần JWT). |
 | _(tự viết)_ `src/db/session-store.js` | Lưu session vào bảng `sessions` — MemoryStore rò bộ nhớ; tránh thêm gói store ít bảo trì. |
 
@@ -79,6 +79,6 @@ npm run dev                                      # chạy NỀN — xem core.md 
 npm run migrate 2>&1 | Select-String "ERROR|FAIL" # chạy migration up
 npm run migrate:down                             # rollback 1 bước (dev only)
 node --env-file=.env scripts/create-admin.js     # tạo tài khoản admin đầu tiên
-npm run import:dyeing-plan -- "<file.xlsx>" --dry-run  # đọc thử; bỏ --dry-run để thay toàn bộ stg_* (~4 phút)
+npm run import:dyeing-plan -- "<file.xlsx>" --dry-run  # in chênh lệch; bỏ --dry-run để đồng bộ stg_* + ghi lịch sử; --replace = thay toàn bộ (cách cũ)
 ```
 CLI: `sqlcmd -S 10.0.60.33 -U <user> -P <pass> -d PMCweb` (đã có sẵn trong PATH).

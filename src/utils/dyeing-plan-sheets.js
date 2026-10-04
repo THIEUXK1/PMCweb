@@ -36,6 +36,10 @@ const SHEETS = [
     sheet: 'detail order ',
     table: 'stg_detail_orders_ext',
     firstDataRow: 3,
+    // Đồng bộ: dòng DB có ngày nhuộm trước ngày sớm nhất trong file = lịch đã qua → giữ lại.
+    historyColumn: 'dye_date',
+    // Sheet tính lại & sắp xếp lại mỗi lần lưu (~13k dòng đổi/lần) → chỉ ghi số lượng, không ghi stg_change_log.
+    logChanges: false,
     columns: [
       'total_by_item_color', 'delivery_date', 'greige_done_date', 'customer', 'end_customer',
       'machine_day_key', 'order_no', 'item_color_key', 'color_code', 'color_prefix',
@@ -100,9 +104,25 @@ const TOTAL_SHEET = {
     'order_type', 'main_color_group',
   ],
   slotColumns: ['machine_no', 'plan_date', 'slot_no', 'value'],
+  slotsHistoryColumn: 'plan_date', // như historyColumn ở SHEETS
+  // Khoá nhận diện 1 ô lịch trong stg_change_log (source_row là dòng máy, không duy nhất).
+  slotsRecordKey: ['machine_no', 'plan_date', 'slot_no'],
 };
 
 // Độ dài tối đa mỗi giá trị — khớp NVARCHAR(500) trong migration 004/005.
 const MAX_VALUE_LENGTH = 500;
 
-module.exports = { SHEETS, TOTAL_SHEET, MAX_VALUE_LENGTH };
+// Tên file: "10.04 染色总排单 Dyeing plan.xlsx", "09.05染色总排单 Dyeing plan(1).xlsx"… → tháng, ngày.
+const FILE_NAME_PATTERN = /^(\d{1,2})\.(\d{1,2})\s*染色总排单\s*Dyeing plan.*\.xlsx$/i;
+
+/** Ngày kế hoạch theo tên file + năm (thư mục năm) → '2026-10-04'; không đúng mẫu → null. */
+function planDateFromFileName(fileName, year) {
+  const m = FILE_NAME_PATTERN.exec(fileName);
+  if (!m) return null;
+  const month = Number(m[1]);
+  const day = Number(m[2]);
+  if (month < 1 || month > 12 || day < 1 || day > 31) return null;
+  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+}
+
+module.exports = { SHEETS, TOTAL_SHEET, MAX_VALUE_LENGTH, planDateFromFileName };

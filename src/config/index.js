@@ -37,4 +37,10 @@ module.exports = {
     password: process.env.MES_PASSWORD || '',
     syncMinutes: Math.max(5, Number(process.env.MES_SYNC_MINUTES) || 30),
   },
+  // Thư mục gốc kế hoạch nhuộm trên ổ mạng (chứa thư mục năm). Bỏ trống → tắt tự động đồng bộ.
+  dyeingPlan: {
+    enabled: Boolean(process.env.DYEING_PLAN_DIR),
+    dir: process.env.DYEING_PLAN_DIR || '',
+    syncMinutes: Math.max(5, Number(process.env.DYEING_PLAN_SYNC_MINUTES) || 10),
+  },
 };

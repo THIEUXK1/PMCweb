@@ -22,11 +22,11 @@ DB `PMCweb` có bảng nền + 7 bảng staging `stg_*` (≈20.5k dòng từ fil
 ## 4. Nhật ký quyết định — 5 dòng gần nhất (cũ hơn → [decision-log.md](decision-log.md))
 | Ngày | Quyết định | Lý do | Hệ quả |
 |---|---|---|---|
+| 2026-10-04 | Kế hoạch nhuộm đồng bộ theo chênh lệch + job tự động 10 phút + lịch sử thay đổi (migration 007); `exceljs` → dependencies | người dùng muốn tự cập nhật, giữ lịch cũ | xem decision-log |
 | 2026-10-02 | Màu Gantt lấy từ MES → bảng `mes_colors` (đồng bộ định kỳ), thêm `src/clients/`, `src/jobs/` | người dùng muốn màu thực tế | xem decision-log |
 | 2026-10-01 | Staging `stg_*` từ Excel kế hoạch nhuộm + `exceljs` (dev) | người dùng chọn | xem decision-log |
 | 2026-10-01 | Đổi MySQL → SQL Server `10.0.60.33`/`PMCweb`, driver `mssql` | người dùng yêu cầu | xem decision-log |
 | 2026-10-01 | Stack Node/Express, hệ thống quản lý nội bộ (DB ban đầu MySQL — đã thay bằng SQL Server) | người dùng chọn | mọi docs bám stack này |
-| 2026-10-01 | Frontend HTML tĩnh + JS thuần, không build step | giữ nhẹ, đủ cho app nội bộ | không React/Vite; mọi tương tác qua fetch |
 ## 5. Ghi chú cho phiên sau
 - Dev server: `npm run dev` chạy nền (lệnh đầy đủ ở [core.md §6](../rules/core.md)).
 - `.env`: giá trị chứa `#` phải bọc nháy kép (`--env-file` coi `#` là comment).
